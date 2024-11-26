@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure to represent a person in the waiting list
+struct Person {
+    char name[50];
+    char phone[20];
+    char position[50];  // Example: Position of interest
+    // Add more fields as needed (e.g., special requirements)
+    struct Person *next;
+};
+
+// Global variable to store the head of the linked list
+struct Person *head = NULL;
+
+// Function to add a new person to the end of the waiting list
+void addToWaitingList(char *name, char *phone, char *position) {
+    struct Person *newPerson = (struct Person *)malloc(sizeof(struct Person));
+    if (newPerson == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+    strcpy(newPerson->name, name);
+    strcpy(newPerson->phone, phone);
+    strcpy(newPerson->position, position);
+    newPerson->next = NULL;
+
+    if (head == NULL) {
+        head = newPerson;
+    } else {
+        struct Person *current = head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newPerson;
+    }
+
+    printf("%s has been added to the waiting list.\n", name);
+}
+
+// Function to display all persons in the waiting list
+void displayWaitingList() {
+    if (head == NULL) {
+        printf("Waiting list is empty.\n");
+        return;
+    }
+
+    printf("Waiting List:\n");
+    struct Person *current = head;
+    int position = 1;
+    while (current != NULL) {
+        printf("%d. Name: %s, Phone: %s, Position: %s\n", position, current->name, current->phone, current->position);
+        current = current->next;
+        position++;
+    }
+}
+
+// Function to remove the first person from the waiting list
+void removeFromWaitingList() {
+    if (head == NULL) {
+        printf("Waiting list is already empty.\n");
+        return;
+    }
+
+    struct Person *temp = head;
+    head = head->next;
+    printf("%s has been removed from the waiting list.\n", temp->name);
+    free(temp);
+}
+
+// Main function to demonstrate the waiting list program
+int main() {
+    int choice;
+    char name[50], phone[20], position[50];
+
+    do {
+        printf("\nCompany Waiting List Management System\n");
+        printf("1. Add to waiting list\n");
+        printf("2. Remove from waiting list\n");
+        printf("3. Display waiting list\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // Consume newline left by scanf
+
+        switch (choice) {
+            case 1:
+                printf("Enter name: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0'; // Remove newline character
+                printf("Enter phone: ");
+                fgets(phone, sizeof(phone), stdin);
+                phone[strcspn(phone, "\n")] = '\0'; // Remove newline character
+                printf("Enter position of interest: ");
+                fgets(position, sizeof(position), stdin);
+                position[strcspn(position, "\n")] = '\0'; // Remove newline character
+                addToWaitingList(name, phone, position);
+                break;
+            case 2:
+                removeFromWaitingList();
+                break;
+            case 3:
+                displayWaitingList();
+                break;
+            case 4:
+                printf("Exiting the program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid choice.\n");
+                break;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
